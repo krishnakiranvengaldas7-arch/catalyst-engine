@@ -1,11 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;500;600;700;800&family=Outfit:wght@200;300;400;500;600;700&family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap");
-
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Cinzel", serif;
-  --font-sans: "Outfit", sans-serif;
-  --font-body: "Plus Jakarta Sans", sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
 
   --color-bg-deep: #000000;
   --color-bg-dark: #050505;

@@ -51,11 +51,11 @@ const CausalResultRow: React.FC<CausalResultRowProps> = ({ node, isSelected, onC
       transition={{
         duration: 0.65,
         delay: index * 0.04,
-        ease: [0.25, 1, 0.5, 1]
+        type: 'spring', stiffness: 250, damping: 25, mass: 0.8
       }}
-      className={`relative overflow-hidden flex justify-between items-center py-2.5 px-3.5 rounded-xl cursor-pointer transition-all duration-300 border ${
+      className={`relative overflow-hidden flex justify-between items-center py-2.5 px-3.5 rounded-sm cursor-pointer transition-all duration-300 border ${
         isSelected
-          ? "bg-[#d4af37]/10 border-[#d4af37]/35 text-white shadow-[inset_0_0_12px_rgba(212,175,55,0.06)]"
+          ? "bg-[#d4af37]/10 border-[#d4af37]/35 text-white "
           : "bg-white/[0.02] border-white/5 text-white/70 hover:bg-white/[0.05] hover:border-white/10 hover:text-white"
       }`}
     >
@@ -74,7 +74,7 @@ const CausalResultRow: React.FC<CausalResultRowProps> = ({ node, isSelected, onC
           transition={{
             duration: p.duration,
             delay: p.delay,
-            ease: [0.25, 0.1, 0.25, 1],
+            type: 'spring', stiffness: 250, damping: 25, mass: 0.8,
           }}
         />
       ))}
@@ -114,7 +114,7 @@ const CausalResultRow: React.FC<CausalResultRowProps> = ({ node, isSelected, onC
             {node.date}
           </span>
           <span
-            className="w-1.5 h-1.5 rounded-full shadow-[0_0_6px_currentColor]"
+            className="w-1.5 h-1.5 rounded-full "
             style={{
               color:
                 node.category === "science" ? "#f59e0b" :
@@ -416,7 +416,7 @@ export const HUD: React.FC = () => {
           }}
           whileHover={{ scale: 1.04, y: -0.5, backgroundColor: "rgba(212,175,55,0.18)" }}
           whileTap={{ scale: 0.96 }}
-          className="inline-flex items-center gap-1 font-serif text-[#d4af37] hover:text-white transition-colors duration-200 border-b border-dashed border-[#d4af37]/45 hover:border-white cursor-pointer px-1.5 py-0.5 mx-0.5 rounded bg-[#d4af37]/5 hover:bg-[#d4af37]/20 text-[9px] leading-none align-middle font-semibold shadow-[0_1px_3px_rgba(212,175,55,0.05)]"
+          className="inline-flex items-center gap-1 font-serif text-[#d4af37] hover:text-white transition-colors duration-200 border-b border-dashed border-[#d4af37]/45 hover:border-white cursor-pointer px-1.5 py-0.5 mx-0.5 rounded bg-[#d4af37]/5 hover:bg-[#d4af37]/20 text-[9px] leading-none align-middle font-semibold "
         >
           <svg className="w-2 h-2 fill-current opacity-70" viewBox="0 0 24 24">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
@@ -656,7 +656,7 @@ export const HUD: React.FC = () => {
                   }}
                   className="text-center select-none ml-[0.3em]"
                 >
-                  <span className="font-serif text-sm md:text-base uppercase tracking-[inherit] text-[#d4af37] drop-shadow-[0_0_15px_rgba(212,175,55,0.25)]">
+                  <span className="font-serif text-sm md:text-base uppercase tracking-[inherit] text-[#d4af37] drop-">
                     {loadingText}
                   </span>
                 </motion.div>
@@ -673,17 +673,17 @@ export const HUD: React.FC = () => {
             initial={{ clipPath: "inset(0% 50% 0% 50% rounded 9999px)", scale: 0.9 }}
             animate={{ clipPath: "inset(0% 0% 0% 0% rounded 9999px)", scale: 1 }}
             exit={{ clipPath: "inset(0% 50% 0% 50% rounded 9999px)", scale: 0.9 }}
-            transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 1.2, type: 'spring', stiffness: 250, damping: 25, mass: 0.8 }}
             className="absolute top-12 left-1/2 -translate-x-1/2 w-full max-w-md px-4 pointer-events-auto z-30 flex flex-col gap-2"
             ref={searchContainerRef}
             style={getFloatingStyle()}
           >
             {/* Search Pill Bar */}
             <div 
-              className={`w-full bg-black/45 backdrop-blur-xl border rounded-full py-3 px-5 flex items-center gap-4 shadow-2xl transition-all duration-300 pointer-events-auto ${
+              className={`w-full bg-black/45 backdrop-blur-xl border rounded-full py-3 px-5 flex items-center gap-4  transition-all duration-300 pointer-events-auto ${
                 searchFocused 
-                  ? "border-[#d4af37]/60 shadow-[0_0_30px_rgba(212,175,55,0.15)]" 
-                  : "border-white/10 hover:border-white/20 hover:shadow-[0_0_20px_rgba(255,255,255,0.03)]"
+                  ? "border-[#d4af37]/60 " 
+                  : "border-white/10 hover:border-white/20 hover:"
               }`}
             >
               {/* Glowing Search Icon */}
@@ -726,7 +726,7 @@ export const HUD: React.FC = () => {
                         </motion.span>
                       ))}
                       {/* Blinking Golden Caret */}
-                      <span className="w-[2px] h-3.5 bg-[#d4af37] ml-0.5 shadow-[0_0_6px_#d4af37] animate-caret" />
+                      <span className="w-[2px] h-3.5 bg-[#d4af37] ml-0.5  animate-caret" />
                     </span>
                   ) : (
                     <span className="text-white/25 flex items-center">
@@ -747,7 +747,7 @@ export const HUD: React.FC = () => {
                   animate={{ clipPath: "inset(0% 0% 0% 0% rounded 16px)", scale: 1 }}
                   exit={{ clipPath: "inset(0% 0% 100% 0% rounded 16px)", scale: 0.96 }}
                   transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                  className="w-full bg-black/60 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-3xl flex flex-col gap-3 pointer-events-auto"
+                  className="w-full bg-black/60 backdrop-blur-2xl border border-white/10 rounded-sm p-4 shadow-3xl flex flex-col gap-3 pointer-events-auto"
                 >
                   {searchQuery.trim() ? (
                     /* 1. QUERY RESULTS */
@@ -798,7 +798,7 @@ export const HUD: React.FC = () => {
                                   onClick={() => executeSearch(query)}
                                   className={`text-[8.5px] tracking-wider uppercase px-2.5 py-1 rounded-full cursor-pointer border transition-all duration-200 ${
                                     isSelected
-                                      ? "bg-[#d4af37]/15 border-[#d4af37]/40 text-white shadow-[0_0_10px_rgba(212,175,55,0.08)]"
+                                      ? "bg-[#d4af37]/15 border-[#d4af37]/40 text-white "
                                       : "bg-white/5 border-white/5 text-white/65 hover:bg-white/10 hover:text-white"
                                   }`}
                                 >
@@ -835,7 +835,7 @@ export const HUD: React.FC = () => {
                                   delay: idx * 0.04,
                                 }}
                                 onClick={() => executeSearch(trend)}
-                                className={`flex items-center justify-between py-1.5 px-2.5 rounded-lg cursor-pointer transition-all duration-200 border text-[9.5px] uppercase tracking-widest ${
+                                className={`flex items-center justify-between py-1.5 px-2.5 rounded-sm cursor-pointer transition-all duration-200 border text-[9.5px] uppercase tracking-widest ${
                                   isSelected
                                     ? "bg-[#d4af37]/10 border-[#d4af37]/25 text-white"
                                     : "bg-transparent border-transparent text-white/50 hover:bg-white/5 hover:text-white"
@@ -901,7 +901,7 @@ export const HUD: React.FC = () => {
                     visible: { opacity: 1, filter: "blur(0px)", scale: 1 },
                   }}
                   transition={{ duration: 2.0, ease: "easeOut" }}
-                  className="font-serif text-5xl md:text-7xl tracking-[0.35em] text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 select-none drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                  className="font-serif text-5xl md:text-7xl tracking-[0.35em] text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 select-none drop-"
                 >
                   {char}
                 </motion.span>
@@ -929,7 +929,7 @@ export const HUD: React.FC = () => {
                 <motion.div
                   animate={{ y: ["-100%", "200%"] }}
                   transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-0 w-full h-1/2 bg-gradient-to-b from-transparent via-[#d4af37] to-transparent shadow-[0_0_8px_#d4af37]"
+                  className="absolute top-0 w-full h-1/2 bg-gradient-to-b from-transparent via-[#d4af37] to-transparent "
                 />
               </div>
             </motion.div>
@@ -972,8 +972,8 @@ export const HUD: React.FC = () => {
                 initial={{ opacity: 0, x: -60, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, x: -40, filter: "blur(8px)" }}
-                transition={{ duration: 1.0, ease: [0.25, 1, 0.5, 1] }}
-                className="absolute left-0 top-0 bottom-0 w-full max-w-sm bg-gradient-to-r from-black/75 via-black/45 to-transparent backdrop-blur-md z-25 pointer-events-auto flex flex-col justify-between p-8 pt-24 overflow-hidden"
+                transition={{ duration: 1.0, type: 'spring', stiffness: 250, damping: 25, mass: 0.8 }}
+                className="absolute left-0 top-0 bottom-0 w-full max-w-sm bg-black/85 backdrop-blur-md z-25 pointer-events-auto flex flex-col justify-between p-8 pt-24 overflow-hidden"
               >
                 {/* Panel Particle Reconstruction Overlay */}
                 {reconstructionParticles.map((p) => (
@@ -1001,7 +1001,7 @@ export const HUD: React.FC = () => {
                 ))}
 
                 {/* Glowing Laser Divider Line */}
-                <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-[#d4af37]/35 to-transparent shadow-[0_0_8px_#d4af37] pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-[#d4af37]/35 to-transparent  pointer-events-none" />
 
                  {/* Content Container (Scrollable) */}
                 <div className="flex flex-col gap-5 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden relative z-10">
@@ -1032,7 +1032,7 @@ export const HUD: React.FC = () => {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 }}
-                    className="text-2xl font-serif tracking-widest text-white uppercase mt-1 leading-tight drop-shadow-[0_2px_8px_rgba(255,255,255,0.15)]"
+                    className="text-2xl font-serif tracking-widest text-white uppercase mt-1 leading-tight drop-"
                   >
                     {activeNode.title}
                   </motion.h1>
@@ -1053,7 +1053,7 @@ export const HUD: React.FC = () => {
                             initial={{ width: 0 }}
                             animate={{ width: `${activeNode.influenceScore}%` }}
                             transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
-                            className="h-full bg-[#d4af37] shadow-[0_0_6px_#d4af37]"
+                            className="h-full bg-[#d4af37] "
                           />
                         </div>
                       </div>
@@ -1105,7 +1105,7 @@ export const HUD: React.FC = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.32 }}
-                    className="flex flex-col gap-2 border border-[#d4af37]/25 rounded-2xl bg-[#d4af37]/[0.02] shadow-[0_4px_20px_rgba(0,0,0,0.2),inset_0_0_15px_rgba(212,175,55,0.02)] overflow-hidden transition-all duration-300"
+                    className="flex flex-col gap-2 border border-[#d4af37]/25 rounded-sm bg-[#d4af37]/[0.02]  overflow-hidden transition-all duration-300"
                   >
                     {/* Header Toggle */}
                     <div 
@@ -1123,7 +1123,7 @@ export const HUD: React.FC = () => {
                               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#d4af37]"></span>
                             </span>
                           ) : (
-                            <svg className="w-4 h-4 text-[#d4af37] drop-shadow-[0_0_4px_rgba(212,175,55,0.5)]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 text-[#d4af37] drop-" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096m.813 5.1V17m0-9a4 4 0 11-8 0 4 4 0 018 0zm0 0v1.5a2.5 2.5 0 005 0V8m0 0a4 4 0 118 0 4 4 0 01-8 0z" />
                             </svg>
@@ -1173,7 +1173,7 @@ export const HUD: React.FC = () => {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.45, ease: [0.25, 1, 0.5, 1] }}
+                          transition={{ duration: 0.45, type: 'spring', stiffness: 250, damping: 25, mass: 0.8 }}
                           className="border-t border-[#d4af37]/15 bg-black/40 backdrop-blur-md"
                         >
                           <div className="p-4 flex flex-col gap-4.5">
@@ -1182,7 +1182,7 @@ export const HUD: React.FC = () => {
                               <motion.div
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="p-3 rounded-xl border border-white/10 bg-white/[0.03] flex flex-col gap-3 relative z-20 text-[10px] pointer-events-auto"
+                                className="p-3 rounded-sm border border-white/10 bg-white/[0.03] flex flex-col gap-3 relative z-20 text-[10px] pointer-events-auto"
                               >
                                 <div className="flex justify-between items-center border-b border-white/5 pb-1.5">
                                   <span className="font-serif tracking-widest text-[#d4af37] uppercase font-semibold">Engine Configuration</span>
@@ -1192,7 +1192,7 @@ export const HUD: React.FC = () => {
                                 {/* Provider Select */}
                                 <div className="flex flex-col gap-1">
                                   <span className="text-white/40 uppercase tracking-wider text-[7.5px]">Causal Intelligence Source</span>
-                                  <div className="flex gap-1 bg-black/40 p-0.5 rounded-lg border border-white/5">
+                                  <div className="flex gap-1 bg-black/40 p-0.5 rounded-sm border border-white/5">
                                     {(["mock", "openai", "local"] as const).map((p) => (
                                       <button
                                         key={p}
@@ -1218,7 +1218,7 @@ export const HUD: React.FC = () => {
                                       value={aiOpenAIKey}
                                       onChange={(e) => handleSaveOpenAIKey(e.target.value)}
                                       placeholder="sk-proj-..."
-                                      className="bg-black/60 border border-white/10 rounded-lg px-2.5 py-1.5 text-white placeholder-white/20 focus:outline-none focus:border-[#d4af37]/50 w-full text-[9px] pointer-events-auto"
+                                      className="bg-black/60 border border-white/10 rounded-sm px-2.5 py-1.5 text-white placeholder-white/20 focus:outline-none focus:border-[#d4af37]/50 w-full text-[9px] pointer-events-auto"
                                     />
                                     <span className="text-white/25 text-[7px] leading-normal mt-0.5">Your key is stored locally in your browser and sent directly to OpenAI.</span>
                                   </motion.div>
@@ -1233,7 +1233,7 @@ export const HUD: React.FC = () => {
                                       value={aiLocalUrl}
                                       onChange={(e) => handleSaveLocalUrl(e.target.value)}
                                       placeholder="http://localhost:11434/api/generate"
-                                      className="bg-black/60 border border-white/10 rounded-lg px-2.5 py-1.5 text-white focus:outline-none focus:border-[#d4af37]/50 w-full text-[9px] pointer-events-auto"
+                                      className="bg-black/60 border border-white/10 rounded-sm px-2.5 py-1.5 text-white focus:outline-none focus:border-[#d4af37]/50 w-full text-[9px] pointer-events-auto"
                                     />
                                     <span className="text-white/25 text-[7px] leading-normal mt-0.5">Ensure your local inference server (e.g. Ollama or Llama.cpp) is running and CORS is enabled.</span>
                                   </motion.div>
@@ -1333,7 +1333,7 @@ export const HUD: React.FC = () => {
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.45, ease: [0.25, 1, 0.5, 1], duration: 0.8 }}
+                        transition={{ delay: 0.45, type: 'spring', stiffness: 250, damping: 25, mass: 0.8, duration: 0.8 }}
                         className="flex flex-col gap-1.5"
                       >
                         <span className="text-[8px] tracking-[0.3em] uppercase text-white/40 font-serif">Causes (Incoming)</span>
@@ -1345,7 +1345,7 @@ export const HUD: React.FC = () => {
                               animate={{ opacity: 1, scale: 1, y: 0 }}
                               transition={{
                                 delay: 0.45 + idx * 0.04,
-                                ease: [0.25, 1, 0.5, 1],
+                                type: 'spring', stiffness: 250, damping: 25, mass: 0.8,
                                 duration: 0.5
                               }}
                               onClick={() => {
@@ -1372,7 +1372,7 @@ export const HUD: React.FC = () => {
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, ease: [0.25, 1, 0.5, 1], duration: 0.8 }}
+                        transition={{ delay: 0.5, type: 'spring', stiffness: 250, damping: 25, mass: 0.8, duration: 0.8 }}
                         className="flex flex-col gap-1.5"
                       >
                         <span className="text-[8px] tracking-[0.3em] uppercase text-white/40 font-serif">Immediate Consequences</span>
@@ -1384,7 +1384,7 @@ export const HUD: React.FC = () => {
                               animate={{ opacity: 1, scale: 1, y: 0 }}
                               transition={{
                                 delay: 0.5 + idx * 0.04,
-                                ease: [0.25, 1, 0.5, 1],
+                                type: 'spring', stiffness: 250, damping: 25, mass: 0.8,
                                 duration: 0.5
                               }}
                               onClick={() => {
@@ -1411,7 +1411,7 @@ export const HUD: React.FC = () => {
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.55, ease: [0.25, 1, 0.5, 1], duration: 0.8 }}
+                        transition={{ delay: 0.55, type: 'spring', stiffness: 250, damping: 25, mass: 0.8, duration: 0.8 }}
                         className="flex flex-col gap-1.5"
                       >
                         <span className="text-[8px] tracking-[0.3em] uppercase text-white/40 font-serif">Long-Term Consequences</span>
@@ -1423,7 +1423,7 @@ export const HUD: React.FC = () => {
                               animate={{ opacity: 1, scale: 1, y: 0 }}
                               transition={{
                                 delay: 0.55 + idx * 0.04,
-                                ease: [0.25, 1, 0.5, 1],
+                                type: 'spring', stiffness: 250, damping: 25, mass: 0.8,
                                 duration: 0.5
                               }}
                               onClick={() => {
@@ -1450,7 +1450,7 @@ export const HUD: React.FC = () => {
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6, ease: [0.25, 1, 0.5, 1], duration: 0.8 }}
+                        transition={{ delay: 0.6, type: 'spring', stiffness: 250, damping: 25, mass: 0.8, duration: 0.8 }}
                         className="flex flex-col gap-1.5"
                       >
                         <span className="text-[8px] tracking-[0.3em] uppercase text-white/40 font-serif">Connected Realities</span>
@@ -1462,7 +1462,7 @@ export const HUD: React.FC = () => {
                               animate={{ opacity: 1, scale: 1, y: 0 }}
                               transition={{
                                 delay: 0.6 + idx * 0.04,
-                                ease: [0.25, 1, 0.5, 1],
+                                type: 'spring', stiffness: 250, damping: 25, mass: 0.8,
                                 duration: 0.5
                               }}
                               onClick={() => {
@@ -1504,7 +1504,7 @@ export const HUD: React.FC = () => {
                         whileHover={{ scale: 0.98, y: 0.5, boxShadow: "0 2px 15px rgba(99, 102, 241, 0.25)" }}
                         whileTap={{ scale: 0.95, y: 1.5, boxShadow: "0 1px 2px rgba(99, 102, 241, 0.1)" }}
                         transition={{ type: "spring", stiffness: 450, damping: 18 }}
-                        className="w-full py-3 px-4 rounded-xl border border-indigo-500/30 bg-indigo-500/10 text-indigo-200 uppercase tracking-[0.18em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer hover:bg-indigo-500/20 hover:border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.15)]"
+                        className="w-full py-3 px-4 rounded-sm border border-indigo-500/30 bg-indigo-500/10 text-white/50 uppercase tracking-[0.18em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer hover:bg-indigo-500/20 hover:border-indigo-500/50 "
                       >
                         <span className="relative flex h-1.5 w-1.5">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -1521,7 +1521,7 @@ export const HUD: React.FC = () => {
                         whileHover={{ scale: 0.98, y: 0.5, boxShadow: "0 2px 15px rgba(212, 175, 55, 0.25)" }}
                         whileTap={{ scale: 0.95, y: 1.5, boxShadow: "0 1px 2px rgba(212, 175, 55, 0.1)" }}
                         transition={{ type: "spring", stiffness: 450, damping: 18 }}
-                        className="w-full py-3 px-4 rounded-xl border border-[#d4af37]/30 bg-[#d4af37]/10 text-amber-200 uppercase tracking-[0.18em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer hover:bg-[#d4af37]/20 hover:border-[#d4af37]/50 shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                        className="w-full py-3 px-4 rounded-sm border border-[#d4af37]/30 bg-[#d4af37]/10 text-amber-200 uppercase tracking-[0.18em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer hover:bg-[#d4af37]/20 hover:border-[#d4af37]/50 "
                       >
                         <span className="relative flex h-1.5 w-1.5">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4af37] opacity-75"></span>
@@ -1531,7 +1531,7 @@ export const HUD: React.FC = () => {
                       </motion.button>
                     </div>
                   ) : (
-                    <div className="w-full bg-indigo-950/25 border border-indigo-500/25 rounded-xl px-2.5 py-1.5 flex items-center justify-between gap-1 shadow-[inset_0_0_12px_rgba(99,102,241,0.05),0_0_18px_rgba(99,102,241,0.1)] backdrop-blur-md">
+                    <div className="w-full bg-indigo-950/25 border border-indigo-500/25 rounded-sm px-2.5 py-1.5 flex items-center justify-between gap-1  backdrop-blur-md">
                       {/* Play/Pause Button */}
                       <motion.button
                         onClick={() => {
@@ -1542,14 +1542,14 @@ export const HUD: React.FC = () => {
                         whileTap={{ scale: 0.9, y: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 15 }}
                         title={butterflyPaused ? "Resume Rewrite" : "Pause Rewrite"}
-                        className="flex items-center justify-center p-1.5 rounded-lg hover:bg-white/10 text-indigo-200/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
+                        className="flex items-center justify-center p-1.5 rounded-sm hover:bg-white/10 text-white/50/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
                       >
                         {butterflyPaused ? (
-                          <svg className="w-3.5 h-3.5 fill-current text-indigo-300" viewBox="0 0 24 24">
+                          <svg className="w-3.5 h-3.5 fill-current text-white/60" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z" />
                           </svg>
                         ) : (
-                          <svg className="w-3.5 h-3.5 fill-current text-indigo-300" viewBox="0 0 24 24">
+                          <svg className="w-3.5 h-3.5 fill-current text-white/60" viewBox="0 0 24 24">
                             <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                           </svg>
                         )}
@@ -1565,9 +1565,9 @@ export const HUD: React.FC = () => {
                         whileTap={{ scale: 0.9, y: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 15 }}
                         title="Restart Rewrite"
-                        className="flex items-center justify-center p-1.5 rounded-lg hover:bg-white/10 text-indigo-200/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
+                        className="flex items-center justify-center p-1.5 rounded-sm hover:bg-white/10 text-white/50/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
                       >
-                        <svg className="w-3.5 h-3.5 fill-none stroke-current text-indigo-300" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <svg className="w-3.5 h-3.5 fill-none stroke-current text-white/60" strokeWidth="2.5" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>
                       </motion.button>
@@ -1582,14 +1582,14 @@ export const HUD: React.FC = () => {
                         whileTap={{ scale: 0.9, y: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 15 }}
                         title={butterflyPlaybackSpeed < 0 ? "Play Forward" : "Play Reverse"}
-                        className="flex items-center justify-center p-1.5 rounded-lg hover:bg-white/10 text-indigo-200/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
+                        className="flex items-center justify-center p-1.5 rounded-sm hover:bg-white/10 text-white/50/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
                       >
                         {butterflyPlaybackSpeed < 0 ? (
-                          <svg className="w-3.5 h-3.5 fill-current text-cyan-400 animate-pulse" viewBox="0 0 24 24">
+                          <svg className="w-3.5 h-3.5 fill-current text-white/60 animate-pulse" viewBox="0 0 24 24">
                             <path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6-8.5 6V6l8.5 6z" />
                           </svg>
                         ) : (
-                          <svg className="w-3.5 h-3.5 fill-current text-indigo-300" viewBox="0 0 24 24">
+                          <svg className="w-3.5 h-3.5 fill-current text-white/60" viewBox="0 0 24 24">
                             <path d="M4 18l8.5-6L4 6v12zm8.5 0l8.5-6-8.5-6v12z" />
                           </svg>
                         )}
@@ -1608,7 +1608,7 @@ export const HUD: React.FC = () => {
                         whileTap={{ scale: 0.9, y: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 15 }}
                         title="Cycle Playback Speed"
-                        className="flex items-center justify-center px-1.5 py-1 rounded-lg hover:bg-white/10 text-indigo-300 font-serif text-[9px] tracking-wide font-bold transition-colors duration-200 cursor-pointer h-7 min-w-8"
+                        className="flex items-center justify-center px-1.5 py-1 rounded-sm hover:bg-white/10 text-white/60 font-serif text-[9px] tracking-wide font-bold transition-colors duration-200 cursor-pointer h-7 min-w-8"
                       >
                         {Math.abs(butterflyPlaybackSpeed).toFixed(1)}x
                       </motion.button>
@@ -1623,7 +1623,7 @@ export const HUD: React.FC = () => {
                         whileTap={{ scale: 0.9, y: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 15 }}
                         title="Restore Original Timeline"
-                        className="flex items-center justify-center p-1.5 rounded-lg hover:bg-indigo-900/40 text-rose-400/80 hover:text-rose-400 transition-colors duration-200 cursor-pointer w-7 h-7"
+                        className="flex items-center justify-center p-1.5 rounded-sm hover:bg-white/10 text-[#d4af37]/80 hover:text-[#d4af37] transition-colors duration-200 cursor-pointer w-7 h-7"
                       >
                         <svg className="w-3.5 h-3.5 fill-none stroke-current" strokeWidth="2.5" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -1644,9 +1644,9 @@ export const HUD: React.FC = () => {
                         whileHover={{ scale: 0.98, y: 0.5, boxShadow: "0 2px 8px rgba(0,0,0,0.25)" }}
                         whileTap={{ scale: 0.94, y: 2, boxShadow: "0 1px 2px rgba(0,0,0,0.4)" }}
                         transition={{ type: "spring", stiffness: 450, damping: 18 }}
-                        className={`w-1/2 py-2.5 px-3 rounded-xl border uppercase tracking-[0.15em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${
+                        className={`w-1/2 py-2.5 px-3 rounded-sm border uppercase tracking-[0.15em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer ${
                           showFullChain 
-                            ? "bg-[#d4af37]/15 border-[#d4af37]/45 text-white shadow-[0_0_15px_rgba(212,175,55,0.1)]" 
+                            ? "bg-[#d4af37]/15 border-[#d4af37]/45 text-white " 
                             : "bg-white/5 border-white/5 text-white/80 hover:text-white hover:bg-white/[0.08]"
                         }`}
                       >
@@ -1673,7 +1673,7 @@ export const HUD: React.FC = () => {
                           whileHover={{ scale: 0.98, y: 0.5, boxShadow: "0 2px 12px rgba(212,175,55,0.25)" }}
                           whileTap={{ scale: 0.94, y: 2, boxShadow: "0 1px 2px rgba(212,175,55,0.1)" }}
                           transition={{ type: "spring", stiffness: 450, damping: 18 }}
-                          className="w-1/2 py-2.5 px-3 rounded-xl border border-[#d4af37]/40 bg-[#d4af37]/10 text-white uppercase tracking-[0.15em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:bg-[#d4af37]/20 hover:border-[#d4af37]/60 shadow-[0_0_12px_rgba(212,175,55,0.1)]"
+                          className="w-1/2 py-2.5 px-3 rounded-sm border border-[#d4af37]/40 bg-[#d4af37]/10 text-white uppercase tracking-[0.15em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:bg-[#d4af37]/20 hover:border-[#d4af37]/60 "
                         >
                           <span className="relative flex h-1.5 w-1.5">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4af37] opacity-75"></span>
@@ -1682,7 +1682,7 @@ export const HUD: React.FC = () => {
                           Show Ripple
                         </motion.button>
                       ) : (
-                        <div className="w-1/2 bg-white/[0.03] border border-white/10 rounded-xl px-2 py-1.5 flex items-center justify-between gap-1 shadow-[inset_0_0_12px_rgba(255,255,255,0.02),0_0_15px_rgba(212,175,55,0.05)] backdrop-blur-sm">
+                        <div className="w-1/2 bg-white/[0.03] border border-white/10 rounded-sm px-2 py-1.5 flex items-center justify-between gap-1  backdrop-blur-sm">
                           {/* Play/Pause Button */}
                           <motion.button
                             onClick={() => {
@@ -1693,7 +1693,7 @@ export const HUD: React.FC = () => {
                             whileTap={{ scale: 0.9, y: 1 }}
                             transition={{ type: "spring", stiffness: 400, damping: 15 }}
                             title={ripplePaused ? "Resume Ripple" : "Pause Ripple"}
-                            className="flex items-center justify-center p-1.5 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
+                            className="flex items-center justify-center p-1.5 rounded-sm hover:bg-white/10 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
                           >
                             {ripplePaused ? (
                               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -1716,7 +1716,7 @@ export const HUD: React.FC = () => {
                             whileTap={{ scale: 0.9, y: 1 }}
                             transition={{ type: "spring", stiffness: 400, damping: 15 }}
                             title="Restart Ripple"
-                            className="flex items-center justify-center p-1.5 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
+                            className="flex items-center justify-center p-1.5 rounded-sm hover:bg-white/10 text-white/80 hover:text-white transition-colors duration-200 cursor-pointer w-7 h-7"
                           >
                             <svg className="w-3.5 h-3.5 fill-none stroke-current" strokeWidth="2.5" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -1734,7 +1734,7 @@ export const HUD: React.FC = () => {
                             whileTap={{ scale: 0.9, y: 1 }}
                             transition={{ type: "spring", stiffness: 400, damping: 15 }}
                             title="Cycle Playback Speed"
-                            className="flex items-center justify-center px-1.5 py-1 rounded-lg hover:bg-white/10 text-[#d4af37] font-serif text-[9px] tracking-wide font-bold transition-colors duration-200 cursor-pointer h-7 min-w-8"
+                            className="flex items-center justify-center px-1.5 py-1 rounded-sm hover:bg-white/10 text-[#d4af37] font-serif text-[9px] tracking-wide font-bold transition-colors duration-200 cursor-pointer h-7 min-w-8"
                           >
                             {ripplePlaybackSpeed.toFixed(1)}x
                           </motion.button>
@@ -1749,7 +1749,7 @@ export const HUD: React.FC = () => {
                             whileTap={{ scale: 0.9, y: 1 }}
                             transition={{ type: "spring", stiffness: 400, damping: 15 }}
                             title="Stop Ripple"
-                            className="flex items-center justify-center p-1.5 rounded-lg hover:bg-white/10 text-red-400/80 hover:text-red-400 transition-colors duration-200 cursor-pointer w-7 h-7"
+                            className="flex items-center justify-center p-1.5 rounded-sm hover:bg-white/10 text-white/60/80 hover:text-white/60 transition-colors duration-200 cursor-pointer w-7 h-7"
                           >
                             <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
                               <rect x="4" y="4" width="16" height="16" rx="2" />
@@ -1759,7 +1759,7 @@ export const HUD: React.FC = () => {
                       )}
                     </div>
                   ) : (
-                    <div className="text-[7.5px] tracking-[0.25em] text-center uppercase text-indigo-300 font-serif animate-pulse py-2.5 border border-indigo-500/15 rounded-xl bg-indigo-950/15 shadow-[0_0_10px_rgba(99,102,241,0.05)]">
+                    <div className="text-[7.5px] tracking-[0.25em] text-center uppercase text-white/60 font-serif animate-pulse py-2.5 border border-white/10 rounded-sm bg-black/60 ">
                       Reality Altered • Exploring Alternate Path
                     </div>
                   )}
@@ -1798,7 +1798,7 @@ export const HUD: React.FC = () => {
                 initial={{ opacity: 0, y: 15, filter: "blur(6px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
+                transition={{ duration: 0.8, type: 'spring', stiffness: 250, damping: 25, mass: 0.8 }}
                 className="absolute bottom-12 left-1/2 -translate-x-1/2 w-full max-w-xl px-6 pointer-events-auto z-20 flex flex-col items-center gap-1 text-center"
               >
                 <div className="flex items-center gap-2">
@@ -1843,7 +1843,7 @@ export const HUD: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -30 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="absolute top-12 left-6 md:left-12 pointer-events-auto z-40 bg-black/40 border border-white/5 backdrop-blur-xl px-5 py-3 rounded-2xl max-w-xs shadow-2xl"
+              className="absolute top-12 left-6 md:left-12 pointer-events-auto z-40 bg-black/40 border border-white/5 backdrop-blur-xl px-5 py-3 rounded-sm max-w-xs "
             >
               <div className="text-[9px] uppercase tracking-[0.25em] font-serif text-[#d4af37]/80">Universe A</div>
               <h3 className="text-sm font-sans font-bold text-white mt-1">Primary Timeline</h3>
@@ -1858,9 +1858,9 @@ export const HUD: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 30 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="absolute top-12 right-28 md:right-36 pointer-events-auto z-40 bg-black/40 border border-white/5 backdrop-blur-xl px-5 py-3 rounded-2xl max-w-xs shadow-2xl"
+              className="absolute top-12 right-28 md:right-36 pointer-events-auto z-40 bg-black/40 border border-white/5 backdrop-blur-xl px-5 py-3 rounded-sm max-w-xs "
             >
-              <div className="text-[9px] uppercase tracking-[0.25em] font-serif text-cyan-400/80">Universe B</div>
+              <div className="text-[9px] uppercase tracking-[0.25em] font-serif text-white/60/80">Universe B</div>
               <h3 className="text-sm font-sans font-bold text-white mt-1">Altered Reality</h3>
               <p className="text-[10px] text-white/50 mt-1 font-light leading-relaxed">
                 Timeline rewritten without the selected focal anchor point.
@@ -1873,15 +1873,15 @@ export const HUD: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.7, type: "spring", stiffness: 300, damping: 25 }}
-              className="absolute top-36 left-6 md:left-12 bottom-36 w-80 pointer-events-auto z-30 bg-black/50 border border-white/10 backdrop-blur-2xl px-6 py-6 rounded-3xl flex flex-col justify-between shadow-2xl"
+              className="absolute top-36 left-6 md:left-12 bottom-36 w-80 pointer-events-auto z-30 bg-black/50 border border-white/10 backdrop-blur-2xl px-6 py-6 rounded-sm flex flex-col justify-between "
             >
               <div>
                 <h4 className="text-[10px] uppercase tracking-[0.3em] font-serif text-amber-400">Multiverse Comparison</h4>
                 <h2 className="text-lg font-sans font-bold text-white mt-1 leading-tight">Timeline Divergence</h2>
                 
                 {/* Focal event description */}
-                <div className="mt-5 bg-white/[0.03] border border-white/5 rounded-2xl p-4">
-                  <div className="text-[8.5px] uppercase tracking-wider text-rose-400 font-medium">Focal Point Removed</div>
+                <div className="mt-5 bg-white/[0.03] border border-white/5 rounded-sm p-4">
+                  <div className="text-[8.5px] uppercase tracking-wider text-[#d4af37] font-medium">Focal Point Removed</div>
                   <div className="text-sm font-sans font-bold text-white mt-1.5">
                     {nodes.find(n => n.id === compareSourceNodeId)?.title || "Selected Event"}
                   </div>
@@ -1899,8 +1899,8 @@ export const HUD: React.FC = () => {
                       .map(id => nodes.find(n => n.id === id))
                       .filter(Boolean)
                       .map(n => (
-                        <div key={n!.id} className="flex items-center gap-2 text-[11px] font-sans text-rose-400/80 bg-rose-950/10 border border-rose-950/20 px-3 py-1.5 rounded-lg">
-                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                        <div key={n!.id} className="flex items-center gap-2 text-[11px] font-sans text-[#d4af37]/80 bg-black/60/10 border border-white/10/20 px-3 py-1.5 rounded-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37] animate-pulse" />
                           <span className="font-light">{n!.title}</span>
                         </div>
                       ))}
@@ -1919,7 +1919,7 @@ export const HUD: React.FC = () => {
                 }}
                 whileHover={{ scale: 0.98, y: 0.5, boxShadow: "0 2px 12px rgba(255,255,255,0.05)" }}
                 whileTap={{ scale: 0.95, y: 1.5 }}
-                className="w-full py-3 rounded-xl border border-white/10 bg-white/5 text-white/80 hover:text-white uppercase tracking-[0.2em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:bg-white/[0.08]"
+                className="w-full py-3 rounded-sm border border-white/10 bg-white/5 text-white/80 hover:text-white uppercase tracking-[0.2em] text-[8.5px] font-medium transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer hover:bg-white/[0.08]"
               >
                 Exit Comparison
               </motion.button>
@@ -1939,9 +1939,9 @@ export const HUD: React.FC = () => {
             }}
             whileHover={{ scale: 1.08, y: -0.5, boxShadow: "0 4px 12px rgba(255,255,255,0.08)" }}
             whileTap={{ scale: 0.95, y: 1 }}
-            className={`flex items-center justify-center w-9 h-9 rounded-full border backdrop-blur-xl transition-all duration-300 shadow-2xl cursor-pointer ${
+            className={`flex items-center justify-center w-9 h-9 rounded-full border backdrop-blur-xl transition-all duration-300  cursor-pointer ${
               cinematicEffects
-                ? "bg-[#d4af37]/10 border-[#d4af37]/45 text-[#d4af37] shadow-[0_0_15px_rgba(212,175,55,0.12)]"
+                ? "bg-[#d4af37]/10 border-[#d4af37]/45 text-[#d4af37] "
                 : "bg-black/35 border-white/10 text-white/50 hover:border-white/25 hover:text-white"
             }`}
             title={cinematicEffects ? "Disable Cinematic Shader Effects" : "Enable Cinematic Shader Effects"}
@@ -1965,9 +1965,9 @@ export const HUD: React.FC = () => {
             }}
             whileHover={{ scale: 1.08, y: -0.5, boxShadow: "0 4px 12px rgba(255,255,255,0.08)" }}
             whileTap={{ scale: 0.95, y: 1 }}
-            className={`flex items-center justify-center w-9 h-9 rounded-full border backdrop-blur-xl transition-all duration-300 shadow-2xl cursor-pointer ${
+            className={`flex items-center justify-center w-9 h-9 rounded-full border backdrop-blur-xl transition-all duration-300  cursor-pointer ${
               influenceMode
-                ? "bg-[#d4af37]/10 border-[#d4af37]/45 text-[#d4af37] shadow-[0_0_15px_rgba(212,175,55,0.12)]"
+                ? "bg-[#d4af37]/10 border-[#d4af37]/45 text-[#d4af37] "
                 : "bg-black/35 border-white/10 text-white/50 hover:border-white/25 hover:text-white"
             }`}
             title={influenceMode ? "Disable Gravity Influence Mode" : "Enable Gravity Influence Mode"}
@@ -1998,9 +1998,9 @@ export const HUD: React.FC = () => {
             }}
             whileHover={{ scale: 1.08, y: -0.5, boxShadow: "0 4px 12px rgba(255,255,255,0.08)" }}
             whileTap={{ scale: 0.95, y: 1 }}
-            className={`flex items-center justify-center w-9 h-9 rounded-full border backdrop-blur-xl transition-all duration-300 shadow-2xl cursor-pointer ${
+            className={`flex items-center justify-center w-9 h-9 rounded-full border backdrop-blur-xl transition-all duration-300  cursor-pointer ${
               soundEnabled
-                ? "bg-[#d4af37]/10 border-[#d4af37]/45 text-[#d4af37] shadow-[0_0_15px_rgba(212,175,55,0.12)]"
+                ? "bg-[#d4af37]/10 border-[#d4af37]/45 text-[#d4af37] "
                 : "bg-black/35 border-white/10 text-white/50 hover:border-white/25 hover:text-white"
             }`}
             title={soundEnabled ? "Mute Audio Hooks" : "Unmute Audio Hooks"}
@@ -2028,12 +2028,12 @@ export const HUD: React.FC = () => {
             initial={{ opacity: 0, filter: "blur(10px)", scale: 0.95 }}
             animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
             exit={{ opacity: 0, filter: "blur(20px)", scale: 1.05 }}
-            transition={{ duration: 3.5, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 3.5, type: 'spring', stiffness: 250, damping: 25, mass: 0.8 }}
             className="absolute inset-0 z-50 flex items-center justify-center pointer-events-auto bg-black/40 backdrop-blur-sm"
             onClick={() => setSignatureSearchPhase('none')}
           >
             <div className="flex flex-col items-center">
-              <h1 className="text-4xl md:text-6xl font-serif text-white tracking-widest uppercase drop-shadow-[0_0_25px_rgba(255,255,255,0.4)] text-center max-w-4xl px-8 leading-tight">
+              <h1 className="text-4xl md:text-6xl font-serif text-white tracking-widest uppercase drop- text-center max-w-4xl px-8 leading-tight">
                 {signatureSearchText}
               </h1>
               <motion.button

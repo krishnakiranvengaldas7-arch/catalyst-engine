@@ -11,7 +11,6 @@ import { ConnectionLines } from "./ConnectionLines";
 import { InteractiveNode } from "./InteractiveNode";
 import { TravellingParticles } from "./TravellingParticles";
 import { InteractiveCluster } from "./InteractiveCluster";
-import { SpacetimeGrid } from "./SpacetimeGrid";
 import { MultiverseBridges } from "./MultiverseBridges";
 import { CinematicEffects } from "./CinematicEffects";
 import { CosmicConstellations } from "./CosmicConstellations";
@@ -519,9 +518,6 @@ export const SceneManager: React.FC = () => {
 
       {/* Advanced Atmospheric Rendering Environment */}
       <Atmosphere />
-
-      {/* Spacetime Curvature Grid */}
-      <SpacetimeGrid activePositions={activePositions} />
 
       {compareMode ? (
         <>

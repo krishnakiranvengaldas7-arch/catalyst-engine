@@ -564,37 +564,37 @@ export const InteractiveNode: React.FC<InteractiveNodeProps> = ({ node, activePo
       >
         {zoomDetail === "close" ? (
           /* LEVEL 3: ZOOMED IN - Rich Causal Detail Card */
-          <div className="flex flex-col gap-2 p-3.5 rounded-xl bg-black/75 backdrop-blur-xl border border-white/10 text-left select-none w-64 shadow-2xl transition-all duration-300">
-            <div className="flex justify-between items-center text-[7.5px] tracking-widest uppercase font-serif" style={{ color: categoryColor }}>
-              <span>{node.category}</span>
-              <span className="text-white/40">{node.timelinePosition}</span>
+          <div className="flex flex-col gap-2 p-3.5 rounded-sm bg-black/85 backdrop-blur-3xl border border-white/15 text-left select-none w-64 shadow-[0_4px_30px_rgba(0,0,0,0.5)] transition-all duration-300">
+            <div className="flex justify-between items-center text-[7px] tracking-[0.2em] uppercase font-sans text-white/50">
+              <span style={{ color: categoryColor }}>{node.category}</span>
+              <span>{node.timelinePosition}</span>
             </div>
             
-            <h3 className="text-[11px] font-semibold text-white tracking-wide mt-0.5 leading-snug">
+            <h3 className="text-[13px] font-serif font-normal text-white tracking-wide mt-0.5 leading-snug">
               {node.title}
             </h3>
             
-            <p className="text-[8.5px] font-sans font-light text-white/55 leading-relaxed">
+            <p className="text-[8.5px] font-sans font-light text-white/60 leading-relaxed tracking-wide">
               {node.description}
             </p>
             
-            <div className="grid grid-cols-2 gap-2 border-t border-white/5 pt-2 mt-1">
+            <div className="grid grid-cols-2 gap-2 border-t border-white/10 pt-2 mt-1">
               <div className="flex flex-col">
-                <span className="text-[6.5px] tracking-wider uppercase text-white/30 font-sans">Influence Score</span>
+                <span className="text-[6px] tracking-[0.2em] uppercase text-white/30 font-sans">Influence Score</span>
                 <span className="text-[10px] font-serif text-[#d4af37] mt-0.5">{node.influenceScore}%</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-[6.5px] tracking-wider uppercase text-white/30 font-sans">Confidence</span>
+                <span className="text-[6px] tracking-[0.2em] uppercase text-white/30 font-sans">Confidence</span>
                 <span className="text-[10px] font-serif text-white/60 mt-0.5">{(node.confidenceScore * 100).toFixed(0)}%</span>
               </div>
             </div>
 
             {/* Causal Ecosystem Navigation Links */}
             {((node.incomingCauses && node.incomingCauses.length > 0) || (node.outgoingConsequences && node.outgoingConsequences.length > 0)) && (
-              <div className="border-t border-white/5 pt-2 mt-1 flex flex-col gap-2">
+              <div className="border-t border-white/10 pt-2 mt-1 flex flex-col gap-2">
                 {node.incomingCauses && node.incomingCauses.length > 0 && (
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[6.5px] tracking-wider uppercase text-white/25 font-sans">Incoming Causes</span>
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[6px] tracking-[0.2em] uppercase text-white/30 font-sans">Incoming Causes</span>
                     <div className="flex flex-wrap gap-1">
                       {node.incomingCauses.map((causeId) => {
                         const causeNode = useExperienceStore.getState().nodes.find(n => n.id === causeId);
@@ -612,7 +612,7 @@ export const InteractiveNode: React.FC<InteractiveNodeProps> = ({ node, activePo
                                 causeNode.position[2] + 4.5
                               ]);
                             }}
-                            className="text-[6.5px] tracking-wide uppercase px-1.5 py-0.5 bg-white/5 hover:bg-[#d4af37]/15 border border-white/5 hover:border-[#d4af37]/25 rounded text-white/50 hover:text-white transition-all duration-150 pointer-events-auto"
+                            className="text-[6.5px] tracking-wider uppercase px-1.5 py-0.5 bg-white/5 hover:bg-[#d4af37]/15 border border-white/10 hover:border-[#d4af37]/30 rounded-sm text-white/50 hover:text-white transition-all duration-150 pointer-events-auto"
                           >
                             {causeNode.title}
                           </button>
@@ -623,26 +623,25 @@ export const InteractiveNode: React.FC<InteractiveNodeProps> = ({ node, activePo
                 )}
                 
                 {node.outgoingConsequences && node.outgoingConsequences.length > 0 && (
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[6.5px] tracking-wider uppercase text-white/25 font-sans">Outgoing Consequences</span>
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[6px] tracking-[0.2em] uppercase text-white/30 font-sans">Outgoing Consequences</span>
                     <div className="flex flex-wrap gap-1">
                       {node.outgoingConsequences.map((conseqId) => {
                         const conseqNode = useExperienceStore.getState().nodes.find(n => n.id === conseqId);
                         if (!conseqNode) return null;
                         return (
                           <button
-                            key={conseqId}
+                            key={`conseq-${conseqId}`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              setActiveNodeId(conseqId);
-                              setCameraTarget(conseqNode.position);
-                              setCameraPosition([
-                                conseqNode.position[0],
-                                conseqNode.position[1] + 1.0,
-                                conseqNode.position[2] + 4.5
-                              ]);
+                              causalityAudio.playRipple();
+                              useExperienceStore.getState().setActiveNodeId(conseqId);
+                              
+                              // Create a path visualization hint
+                              useExperienceStore.getState().setCompareMode(true, conseqId);
+                              setTimeout(() => useExperienceStore.getState().setCompareMode(false), 800);
                             }}
-                            className="text-[6.5px] tracking-wide uppercase px-1.5 py-0.5 bg-white/5 hover:bg-[#d4af37]/15 border border-white/5 hover:border-[#d4af37]/25 rounded text-white/50 hover:text-white transition-all duration-150 pointer-events-auto"
+                            className="text-[6.5px] tracking-wider uppercase px-1.5 py-0.5 bg-white/5 hover:bg-[#d4af37]/15 border border-white/10 hover:border-[#d4af37]/30 rounded-sm text-white/50 hover:text-white transition-all duration-150 pointer-events-auto"
                           >
                             {conseqNode.title}
                           </button>
@@ -657,10 +656,10 @@ export const InteractiveNode: React.FC<InteractiveNodeProps> = ({ node, activePo
         ) : (
           /* LEVEL 2: MEDIUM ZOOM - Faint standard Date & Title */
           <div className="flex flex-col items-center select-none text-center">
-            <span className="text-[9px] uppercase tracking-widest text-[#d4af37] opacity-70 font-serif">
+            <span className="text-[7.5px] uppercase tracking-[0.25em] text-[#d4af37] opacity-70 font-sans">
               {node.date}
             </span>
-            <span className="text-[12px] font-semibold whitespace-nowrap text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-sans mt-0.5">
+            <span className="text-[13px] font-normal tracking-wide whitespace-nowrap text-white font-serif mt-0.5">
               {node.title}
             </span>
           </div>

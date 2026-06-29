@@ -15,7 +15,7 @@ const Digit: React.FC<{ char: string }> = ({ char }) => {
           animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
           exit={{ y: "-100%", opacity: 0, filter: "blur(2px)" }}
           transition={{ type: "spring", stiffness: 350, damping: 25 }}
-          className="absolute inset-0 flex justify-center items-center text-transparent bg-clip-text bg-gradient-to-b from-white via-amber-100 to-amber-300 drop-shadow-[0_2px_10px_rgba(212,175,55,0.25)]"
+          className="absolute inset-0 flex justify-center items-center text-transparent bg-clip-text bg-gradient-to-b from-white via-amber-100 to-amber-300 drop-"
         >
           {char}
         </motion.span>
@@ -312,7 +312,7 @@ export const TimelineControl: React.FC = () => {
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       exit={{ opacity: 0, y: 40, filter: "blur(8px)" }}
       transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
-      className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-3xl h-36 rounded-3xl border border-white/10 bg-black/45 backdrop-blur-2xl shadow-3xl flex flex-col items-center justify-between p-4 px-8 pointer-events-auto select-none z-30 overflow-hidden"
+      className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-3xl h-36 rounded-sm border border-white/10 bg-black/45 backdrop-blur-2xl shadow-3xl flex flex-col items-center justify-between p-4 px-8 pointer-events-auto select-none z-30 overflow-hidden"
       ref={containerRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -345,8 +345,8 @@ export const TimelineControl: React.FC = () => {
         ref={trackRef}
       >
         {/* Glowing Sight Center Reticle (Sight Glass) */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#d4af37] via-[#d4af37]/65 to-transparent shadow-[0_0_12px_#d4af37] -translate-x-1/2 pointer-events-none z-20" />
-        <div className="absolute left-1/2 top-0 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#d4af37] shadow-[0_0_8px_#d4af37] z-20 pointer-events-none" />
+        <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#d4af37] via-[#d4af37]/65 to-transparent  -translate-x-1/2 pointer-events-none z-20" />
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#d4af37]  z-20 pointer-events-none" />
 
         {/* Sliding Ruler Track (Physical slide driven by physics offset) */}
         <div
@@ -401,13 +401,13 @@ export const TimelineControl: React.FC = () => {
                 <span 
                   className={`text-[6.5px] tracking-[0.2em] font-serif uppercase text-center transition-all duration-500 whitespace-nowrap ${
                     isActive 
-                      ? "text-[#d4af37] drop-shadow-[0_0_8px_rgba(212,175,55,0.6)] font-semibold scale-110" 
+                      ? "text-[#d4af37] drop- font-semibold scale-110" 
                       : "text-white/20 scale-100"
                   }`}
                 >
                   {ms.label}
                 </span>
-                <div className={`w-1 h-1 rounded-full mt-1.5 transition-all duration-500 ${isActive ? "bg-[#d4af37] scale-125 shadow-[0_0_4px_#d4af37]" : "bg-white/10"}`} />
+                <div className={`w-1 h-1 rounded-full mt-1.5 transition-all duration-500 ${isActive ? "bg-[#d4af37] scale-125 " : "bg-white/10"}`} />
               </div>
             );
           })}
