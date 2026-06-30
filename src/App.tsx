@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { AnimationProvider } from "./providers/AnimationProvider";
 import { ExperienceProvider } from "./providers/ExperienceProvider";
-import { Pipeline } from "./experience/Pipeline";
 import { HUD } from "./components/HUD";
 import { CustomCursor } from "./components/CustomCursor";
 import { useExperienceStore } from "./store/useExperienceStore";
@@ -32,14 +31,24 @@ function App() {
   return (
     <AnimationProvider>
       <ExperienceProvider>
-        <div className="relative w-full h-screen bg-black overflow-hidden select-none">
-          {/* Three.js WebGL Rendering Pipeline */}
-          <Pipeline />
+        <div className="relative w-full min-h-screen bg-[#050505] text-white selection:bg-[#d4af37]/30">
+          
+          {/* Ultra-minimal ambient noise background */}
+          <div 
+            className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-screen"
+            style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}
+          />
+          
+          {/* Subtle central glow */}
+          <div className="fixed inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden">
+            <div className="w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-white opacity-[0.015] blur-[100px] rounded-full mix-blend-screen" />
+          </div>
 
-          {/* Premium UI Overlay HUD */}
-          <HUD />
+          {/* Foreground Scrolling Content */}
+          <div className="relative z-10 w-full min-h-screen flex flex-col">
+            <HUD />
+          </div>
 
-          {/* Elegant custom cursor and ambient controller */}
           <CustomCursor />
         </div>
       </ExperienceProvider>

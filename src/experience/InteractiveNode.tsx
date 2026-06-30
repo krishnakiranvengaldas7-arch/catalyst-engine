@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Html } from "@react-three/drei";
+// Removed Html import
 import * as THREE from "three";
 import {
   useExperienceStore,
@@ -145,9 +145,6 @@ export const InteractiveNode: React.FC<InteractiveNodeProps> = ({ node, activePo
 
   const totalTimelineOpacity = timelineFade * historyFade;
   const nodeOpacity = fade * (isClusterMember ? 1.0 : 0.12) * bOpacityState * totalTimelineOpacity;
-
-  const showLabel = isActive || isHovered || totalTimelineOpacity > 0.15;
-  const labelOpacity = (isActive || isHovered ? 1.0 : (zoomDetail === "far" ? 0.45 : 0.6)) * nodeOpacity * (showLabel ? 1.0 : 0.0);
 
   const elapsedRef = useRef(0);
 
@@ -551,120 +548,7 @@ export const InteractiveNode: React.FC<InteractiveNodeProps> = ({ node, activePo
         </mesh>
       )}
 
-      {/* Reusable 3D HTML Label */}
-      <Html
-        distanceFactor={6}
-        position={[0, 0.65, 0]}
-        center
-        style={{
-          transition: "opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)",
-          opacity: labelOpacity,
-          pointerEvents: (zoomDetail === "close" && showLabel) ? "auto" : "none",
-        }}
-      >
-        {zoomDetail === "close" ? (
-          /* LEVEL 3: ZOOMED IN - Rich Causal Detail Card */
-          <div className="flex flex-col gap-2 p-3.5 rounded-sm bg-black/85 backdrop-blur-3xl border border-white/15 text-left select-none w-64 shadow-[0_4px_30px_rgba(0,0,0,0.5)] transition-all duration-300">
-            <div className="flex justify-between items-center text-[7px] tracking-[0.2em] uppercase font-sans text-white/50">
-              <span style={{ color: categoryColor }}>{node.category}</span>
-              <span>{node.timelinePosition}</span>
-            </div>
-            
-            <h3 className="text-[13px] font-serif font-normal text-white tracking-wide mt-0.5 leading-snug">
-              {node.title}
-            </h3>
-            
-            <p className="text-[8.5px] font-sans font-light text-white/60 leading-relaxed tracking-wide">
-              {node.description}
-            </p>
-            
-            <div className="grid grid-cols-2 gap-2 border-t border-white/10 pt-2 mt-1">
-              <div className="flex flex-col">
-                <span className="text-[6px] tracking-[0.2em] uppercase text-white/30 font-sans">Influence Score</span>
-                <span className="text-[10px] font-serif text-[#d4af37] mt-0.5">{node.influenceScore}%</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[6px] tracking-[0.2em] uppercase text-white/30 font-sans">Confidence</span>
-                <span className="text-[10px] font-serif text-white/60 mt-0.5">{(node.confidenceScore * 100).toFixed(0)}%</span>
-              </div>
-            </div>
-
-            {/* Causal Ecosystem Navigation Links */}
-            {((node.incomingCauses && node.incomingCauses.length > 0) || (node.outgoingConsequences && node.outgoingConsequences.length > 0)) && (
-              <div className="border-t border-white/10 pt-2 mt-1 flex flex-col gap-2">
-                {node.incomingCauses && node.incomingCauses.length > 0 && (
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[6px] tracking-[0.2em] uppercase text-white/30 font-sans">Incoming Causes</span>
-                    <div className="flex flex-wrap gap-1">
-                      {node.incomingCauses.map((causeId) => {
-                        const causeNode = useExperienceStore.getState().nodes.find(n => n.id === causeId);
-                        if (!causeNode) return null;
-                        return (
-                          <button
-                            key={causeId}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveNodeId(causeId);
-                              setCameraTarget(causeNode.position);
-                              setCameraPosition([
-                                causeNode.position[0],
-                                causeNode.position[1] + 1.0,
-                                causeNode.position[2] + 4.5
-                              ]);
-                            }}
-                            className="text-[6.5px] tracking-wider uppercase px-1.5 py-0.5 bg-white/5 hover:bg-[#d4af37]/15 border border-white/10 hover:border-[#d4af37]/30 rounded-sm text-white/50 hover:text-white transition-all duration-150 pointer-events-auto"
-                          >
-                            {causeNode.title}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-                
-                {node.outgoingConsequences && node.outgoingConsequences.length > 0 && (
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[6px] tracking-[0.2em] uppercase text-white/30 font-sans">Outgoing Consequences</span>
-                    <div className="flex flex-wrap gap-1">
-                      {node.outgoingConsequences.map((conseqId) => {
-                        const conseqNode = useExperienceStore.getState().nodes.find(n => n.id === conseqId);
-                        if (!conseqNode) return null;
-                        return (
-                          <button
-                            key={`conseq-${conseqId}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              causalityAudio.playRipple();
-                              useExperienceStore.getState().setActiveNodeId(conseqId);
-                              
-                              // Create a path visualization hint
-                              useExperienceStore.getState().setCompareMode(true, conseqId);
-                              setTimeout(() => useExperienceStore.getState().setCompareMode(false), 800);
-                            }}
-                            className="text-[6.5px] tracking-wider uppercase px-1.5 py-0.5 bg-white/5 hover:bg-[#d4af37]/15 border border-white/10 hover:border-[#d4af37]/30 rounded-sm text-white/50 hover:text-white transition-all duration-150 pointer-events-auto"
-                          >
-                            {conseqNode.title}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        ) : (
-          /* LEVEL 2: MEDIUM ZOOM - Faint standard Date & Title */
-          <div className="flex flex-col items-center select-none text-center">
-            <span className="text-[7.5px] uppercase tracking-[0.25em] text-[#d4af37] opacity-70 font-sans">
-              {node.date}
-            </span>
-            <span className="text-[13px] font-normal tracking-wide whitespace-nowrap text-white font-serif mt-0.5">
-              {node.title}
-            </span>
-          </div>
-        )}
-      </Html>
+      {/* No HTML labels rendered in 3D - Handled by TimelineView.tsx */}
     </group>
   );
 };

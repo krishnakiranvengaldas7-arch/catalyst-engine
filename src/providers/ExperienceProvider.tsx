@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { gsap } from "gsap";
 import { useExperienceStore, type HistoricalNode } from "../store/useExperienceStore";
+import { historicalCausalDb } from "../utils/aiExplanationService";
 
 interface ExperienceContextType {
   startExploration: () => void;
@@ -217,7 +218,20 @@ export const ExperienceProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Initialize the store with seed data on mount
   useEffect(() => {
-    useExperienceStore.setState({ nodes: historicalTimelineNodes });
+    // Attach the highly detailed Wikipedia-like deep dive content to each node
+    const enrichedNodes = historicalTimelineNodes.map(node => {
+      const dbEntry = historicalCausalDb[node.id];
+      if (dbEntry) {
+        return {
+          ...node,
+          deepDiveContent: dbEntry.map(section => ({ title: section.title, content: section.content }))
+        };
+      }
+      return node;
+    });
+
+    useExperienceStore.setState({ nodes: enrichedNodes });
+    console.log("Nodes seeded into store:", enrichedNodes.length);
   }, []);
 
   const startExploration = () => {

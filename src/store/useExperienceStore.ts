@@ -15,6 +15,7 @@ export interface HistoricalNode {
   confidenceScore: number;
   position: [number, number, number]; // Position in 3D space
   historicalContext: string;
+  deepDiveContent?: { title: string; content: string }[];
   influenceScore: number;
   timelinePosition: string;
   relatedDiscoveries: string[];
@@ -54,6 +55,7 @@ interface ExperienceStore {
   hoveredNodeId: string | null;
   setActiveNodeId: (id: string | null) => void;
   setHoveredNodeId: (id: string | null) => void;
+  addNode: (node: HistoricalNode) => void;
 
   // Exploration & Discovery Clusters
   selectedClusterId: string | null;
@@ -169,7 +171,7 @@ export const useExperienceStore = create<ExperienceStore>((set) => ({
   discoverHookText: null,
   setDiscoverHookText: (discoverHookText) => set({ discoverHookText }),
   
-  currentState: "loading",
+  currentState: "explore",
   setCurrentState: (currentState) => set({ currentState }),
 
   loadingProgress: 0,
@@ -180,7 +182,7 @@ export const useExperienceStore = create<ExperienceStore>((set) => ({
   loadingText: "",
   setLoadingText: (loadingText) => set({ loadingText }),
 
-  entranceProgress: 0,
+  entranceProgress: 1,
   setEntranceProgress: (entranceProgress) => set({ entranceProgress }),
 
   nodes: [], // Will be populated with historical nodes
@@ -188,6 +190,7 @@ export const useExperienceStore = create<ExperienceStore>((set) => ({
   hoveredNodeId: null,
   setActiveNodeId: (activeNodeId) => set({ activeNodeId }),
   setHoveredNodeId: (hoveredNodeId) => set({ hoveredNodeId }),
+  addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
 
   selectedClusterId: null,
   hoveredClusterId: null,

@@ -16,7 +16,7 @@ export interface Citation {
 // Highly detailed, world-class historian level causal explanations for all 11 nodes.
 // Each section contains rich, thoughtful historical causality, integrated with citation tags.
 // Citation tags are formatted as: [label](citation:nodeId)
-const historicalCausalDb: Record<string, CausalSection[]> = {
+export const historicalCausalDb: Record<string, CausalSection[]> = {
   agricultural_revolution: [
     {
       id: "root_causes",
