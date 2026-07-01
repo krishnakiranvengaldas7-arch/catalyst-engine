@@ -150,6 +150,7 @@ const AIEventGenerator: React.FC = () => {
   const [query, setQuery] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState(0);
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,31 +164,53 @@ const AIEventGenerator: React.FC = () => {
       const searchRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`);
       const searchData = await searchRes.json();
       
-      if (!searchData.query?.search?.length) {
-        throw new Error("No historical data found for this event.");
+      let bestMatchTitle = query;
+      let rawSections: string[] = [];
+
+      if (searchData.query?.search?.length > 0) {
+        bestMatchTitle = searchData.query.search[0].title;
+        setGenerationStep(2);
+        const extractRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=${encodeURIComponent(bestMatchTitle)}&explaintext=1&origin=*`);
+        const extractData = await extractRes.json();
+        
+        const pages = extractData.query?.pages;
+        const pageId = Object.keys(pages || {})[0];
+        const extract = pages?.[pageId]?.extract || "";
+        rawSections = extract.split(/\n\s*\n/).map((s: string) => s.trim()).filter((s: string) => s.length > 50);
       }
-      
-      const bestMatchTitle = searchData.query.search[0].title;
-
-      setGenerationStep(2);
-
-      // 2. Fetch the full page extract to build the deep dive
-      const extractRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles=${encodeURIComponent(bestMatchTitle)}&explaintext=1&origin=*`);
-      const extractData = await extractRes.json();
-      
-      const pages = extractData.query?.pages;
-      const pageId = Object.keys(pages || {})[0];
-      const extract = pages?.[pageId]?.extract || "";
 
       setGenerationStep(3);
 
-      // 3. Process the extract into rich deep dive sections
-      // Split by double newlines (paragraphs or headers)
-      const rawSections = extract.split(/\n\s*\n/).map((s: string) => s.trim()).filter((s: string) => s.length > 50);
-      
+      // If no Wikipedia data found, check if it's gibberish
+      if (rawSections.length === 0) {
+        const clean = query.trim().toLowerCase();
+        const isGibberish = 
+          !/[aeiouy]/.test(clean) || // No vowels
+          /[bcdfghjklmnpqrstvwxz]{6,}/.test(clean) || // 6+ consecutive consonants
+          /(.)\1{3,}/.test(clean) || // 4+ repeated characters
+          (clean.split(/\s+/).length === 1 && clean.length > 14); // Single massive word
+
+        if (isGibberish) {
+          throw new Error(`Invalid data signature: "${query}" appears to be gibberish or corrupt data.`);
+        }
+
+        // It's a real niche phrase, use synthetic generative fallback
+        rawSections = [
+          `The historical vector known as "${query}" represents a highly specific or culturally nascent phenomenon. Due to its niche or emergent nature, traditional archival consensus is fragmented, requiring the Catalyst Engine to synthesize its causal impact procedurally.`,
+          `Root analysis suggests this event emerged from localized socio-economic friction or digital-cultural shifts, cascading into broader community behavioral changes that challenged existing paradigms.`,
+          `While its immediate impact may seem contained, the long-term reverberations of "${query}" establish new precedents for collective action, systemic disruption, and grassroots momentum.`,
+          `Unexpectedly, this event forced structural adaptations in its surrounding ecosystem, demonstrating how micro-catalysts can bypass traditional gatekeepers to achieve critical mass.`,
+          `Today, its legacy serves as a testament to the fact that no event exists in isolation—even hyper-specific digital or cultural movements can reshape broader societal frameworks.`
+        ];
+      }
+
       // Attempt to extract a year from the first paragraph
       const yearMatch = rawSections[0]?.match(/\b([12]\d{3})\b/);
-      const generatedYear = yearMatch ? `${yearMatch[0]} CE` : "Unknown Era";
+      const generatedYear = yearMatch ? `${yearMatch[0]} CE` : "Contemporary";
+
+      // Create a solid summary (first 2 sentences) for the card description
+      const firstSectionSentences = rawSections[0].split(/(?<=\.)\s+/);
+      const summaryText = firstSectionSentences.slice(0, 2).join(" ") || rawSections[0].substring(0, 250) + "...";
 
       // Map raw text chunks to our Deep Dive sections format
       const sectionTitles = ["Historical Context", "Root Causes", "Immediate Effects", "Long-Term Consequences", "Modern Impact"];
@@ -195,14 +218,6 @@ const AIEventGenerator: React.FC = () => {
         title: sectionTitles[idx] || `Analysis ${idx + 1}`,
         content: content.replace(/==+([^=]+)==+/g, "").trim() // remove wiki headers
       }));
-
-      // Fallback if not enough content
-      if (deepDiveContent.length === 0) {
-        deepDiveContent.push({
-          title: "Historical Context",
-          content: "Data corruption in timeline extraction. Minimal records found."
-        });
-      }
 
       // 4. Inject into Zustand
       const store = useExperienceStore.getState();
@@ -212,7 +227,7 @@ const AIEventGenerator: React.FC = () => {
         id: newNodeId,
         title: bestMatchTitle,
         date: generatedYear,
-        description: rawSections[0]?.substring(0, 180) + "..." || `Synthesized mapping of ${bestMatchTitle}.`,
+        description: summaryText,
         category: "synthesized",
         connections: [],
         incomingCauses: [],
@@ -229,15 +244,16 @@ const AIEventGenerator: React.FC = () => {
 
       store.addNode(newNode as any);
       setQuery("");
+      setIsGeneratorOpen(false);
 
       // Scroll to bottom after state update
       setTimeout(() => {
         window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
       }, 100);
 
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Catalyst Engine Error: Could not resolve timeline vector for this query.");
+      alert(err.message || "Catalyst Engine Error: Could not resolve timeline vector for this query.");
     } finally {
       setIsGenerating(false);
       setGenerationStep(0);
@@ -245,73 +261,121 @@ const AIEventGenerator: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 py-24 mb-32 border border-white/10 bg-[#0a0a0a] relative overflow-hidden group">
-      {isGenerating && (
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-[#d4af37]/10 to-transparent w-[200%]"
-          animate={{ x: ["-100%", "50%"] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        />
-      )}
-      
-      <div className="relative z-10 flex flex-col items-center text-center">
-        <div className="w-12 h-[1px] bg-[#d4af37] mb-8" />
-        <h3 className="font-serif text-3xl text-white mb-4">Map a Custom Event</h3>
-        <p className="text-white/40 font-sans text-sm tracking-wide max-w-xl mb-12">
-          Enter any historical or theoretical event. The Catalyst Intelligence Engine will map its causal roots, downstream consequences, and global influence score in real-time.
-        </p>
+    <>
+      {/* Floating Action Button */}
+      <button 
+        onClick={() => setIsGeneratorOpen(true)}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-[#d4af37]/10 border border-[#d4af37]/30 rounded-full flex items-center justify-center text-[#d4af37] hover:bg-[#d4af37]/20 hover:border-[#d4af37] hover:scale-105 transition-all z-40 backdrop-blur-md group shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+      >
+        <span className="text-2xl font-light tracking-tighter mb-1">+</span>
+        {/* Tooltip */}
+        <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 px-3 py-1 bg-black/80 border border-white/10 text-white/70 text-[10px] uppercase tracking-widest whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity">
+          Map New Event
+        </div>
+      </button>
 
-        <form onSubmit={handleGenerate} className="w-full max-w-2xl relative">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            disabled={isGenerating}
-            placeholder="e.g. The Discovery of Penicillin, The Fall of Rome..."
-            className="w-full bg-transparent border-b border-white/20 pb-4 text-center font-serif text-2xl text-white placeholder-white/20 focus:outline-none focus:border-[#d4af37] transition-colors"
-          />
-          
-          <AnimatePresence mode="wait">
-            {isGenerating ? (
-              <motion.div 
-                key="generating"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="mt-12 flex flex-col items-center gap-4"
+      {/* AI Event Generator Modal */}
+      <AnimatePresence>
+        {isGeneratorOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+          >
+            <div className="absolute inset-0" onClick={() => !isGenerating && setIsGeneratorOpen(false)} />
+            
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="max-w-2xl w-full border border-[#d4af37]/20 bg-[#050505] p-10 relative overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)]"
+            >
+              {/* Decorative corner accents */}
+              <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#d4af37]/50" />
+              <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[#d4af37]/50" />
+              <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[#d4af37]/50" />
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#d4af37]/50" />
+
+              <button 
+                onClick={() => !isGenerating && setIsGeneratorOpen(false)}
+                className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors text-xl font-light"
               >
-                <div className="flex gap-2">
-                  <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 bg-[#d4af37] rounded-full" />
-                  <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 bg-[#d4af37] rounded-full" />
-                  <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 bg-[#d4af37] rounded-full" />
+                ✕
+              </button>
+
+              <div className="mb-10 text-center relative z-10">
+                <h3 className="text-[#d4af37] font-sans text-xs tracking-[0.4em] uppercase mb-4">
+                  Map a Custom Event
+                </h3>
+                <p className="text-white/50 font-serif text-sm italic max-w-md mx-auto leading-relaxed">
+                  Enter any historical, cultural, or theoretical event to inject a new vector into the causality timeline.
+                </p>
+              </div>
+
+              <form onSubmit={handleGenerate} className="flex flex-col gap-8 relative z-10">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="e.g. The Fall of Rome, Invention of the Internet..."
+                  disabled={isGenerating}
+                  className="bg-transparent border-b border-white/20 pb-4 text-center font-serif text-xl md:text-2xl text-white placeholder-white/20 focus:outline-none focus:border-[#d4af37] transition-colors disabled:opacity-50"
+                  autoFocus
+                />
+
+                <div className="flex flex-col items-center mt-4 h-16">
+                  <AnimatePresence mode="wait">
+                    {isGenerating ? (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex flex-col items-center gap-4"
+                      >
+                        <div className="flex gap-2">
+                          <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0 }} className="w-1.5 h-1.5 bg-[#d4af37] rounded-full" />
+                          <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.2 }} className="w-1.5 h-1.5 bg-[#d4af37] rounded-full" />
+                          <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: 0.4 }} className="w-1.5 h-1.5 bg-[#d4af37] rounded-full" />
+                        </div>
+                        <span className="text-[#d4af37] font-sans text-[10px] uppercase tracking-[0.3em]">
+                          {generationStep === 1 && "Querying Global Archives..."}
+                          {generationStep === 2 && "Tracing Causal Shockwaves..."}
+                          {generationStep === 3 && "Synthesizing Deep Lore..."}
+                        </span>
+                      </motion.div>
+                    ) : (
+                      <motion.button
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        type="submit"
+                        disabled={!query.trim()}
+                        className="px-8 py-3 bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] font-sans text-[10px] tracking-[0.3em] uppercase hover:bg-[#d4af37]/20 hover:border-[#d4af37] transition-all disabled:opacity-30 disabled:hover:bg-[#d4af37]/10 disabled:hover:border-[#d4af37]/30 cursor-pointer"
+                      >
+                        Initiate Catalyst
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
                 </div>
-                <span className="text-[#d4af37] font-sans text-[10px] uppercase tracking-[0.3em]">
-                  {generationStep === 1 && "Initializing Catalyst Engine..."}
-                  {generationStep === 2 && "Tracing Causal Shockwaves..."}
-                  {generationStep === 3 && "Synthesizing Node..."}
-                </span>
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="idle"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="mt-12"
-              >
-                <button 
-                  type="submit"
-                  disabled={!query.trim()}
-                  className="px-8 py-3 border border-white/20 text-white/80 font-sans text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white/80 cursor-pointer"
-                >
-                  Generate Timeline Node
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </form>
-      </div>
-    </div>
+              </form>
+
+              {/* Background gradient effect during generation */}
+              <AnimatePresence>
+                {isGenerating && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 bg-gradient-to-r from-[#d4af37]/0 via-[#d4af37]/5 to-[#d4af37]/0 -skew-x-12 translate-x-[-150%] animate-[scan_2s_ease-in-out_infinite] pointer-events-none"
+                  />
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
